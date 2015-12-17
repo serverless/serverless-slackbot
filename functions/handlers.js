@@ -4,12 +4,10 @@
  * Functions
  */
 
-var path = require('path');
+var path   = require('path'),
+ SlackBot  = require('../_module').SlackBot;
 
-// Require SlackBot
-var SlackBot = require('../_module').SlackBot;
-
-// Load Skills
+// Load You SlackBot's Skills
 SlackBot.loadSkills(path.join(__dirname, '../lib/skills'));
 
 /**
@@ -17,16 +15,11 @@ SlackBot.loadSkills(path.join(__dirname, '../lib/skills'));
  * - Process incoming SlashCommand
  */
 
-module.exports.incoming = function(event, context) {
-  console.log("HERHERHER", event, context)
-  //return SlackBot.process(event, context);
-};
+module.exports.incoming = SlackBot.process;
 
 /**
  * Authorize
  * - Handle authorization of the Slack App
  */
 
-module.exports.authorize = function(event, context) {
-  return SlackBot.authorize(event, context);
-};
+module.exports.authorize = SlackBot.authorize;

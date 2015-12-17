@@ -36,8 +36,6 @@ var SlackBot = {
 
 SlackBot.process = function(event, context) {
 
-  var _this = this;
-
   // Parse Body
   var body = qs.parse(event.body);
 
@@ -45,21 +43,21 @@ SlackBot.process = function(event, context) {
   var command = body.text.split(' ');
 
   // Check if skills context exists
-  if (!command[0] || !_this.skills[command[0]]) {
-    return _this.sendError(context, 'Missing context', {
+  if (!command[0] || !SlackBot.skills[command[0]]) {
+    return SlackBot.sendError(context, 'Missing context', {
       message: 'Sorry, I don\'t understand ' + command[0] + '.  I am not programmed to understand it :('
     });
   }
 
   // Check if skills context action exists
-  if (!_this.skills[command[0]][command[1]]) {
-    return _this.sendError(context, 'Missing context action', {
+  if (!SlackBot.skills[command[0]][command[1]]) {
+    return SlackBot.sendError(context, 'Missing context action', {
       message: 'Sorry, I understand ' + command[0] + ', but I do not understand ' + command[1] + '...'
     });
   }
-  console.log("LKSFLSJFDSFLSLKFJ")
+
   // Perform Command
-  return _this.skills[command[0]][command[1]](context, event, body);
+  return SlackBot.skills[command[0]][command[1]](context, event, body);
 };
 
 /**
@@ -67,8 +65,8 @@ SlackBot.process = function(event, context) {
  */
 
 SlackBot.addSkill = function(context, action, func) {
-  if (!this.skills[context]) this.skills[context] = {};
-  this.skills[context][action] = func;
+  if (!SlackBot.skills[context]) SlackBot.skills[context] = {};
+  SlackBot.skills[context][action] = func;
 };
 
 /**
@@ -120,7 +118,6 @@ SlackBot.sendError = function(context, error, message) {
 
 SlackBot.loadSkills = function(skillsPath) {
 
-  var _this = this;
   skillsPath = path.join(skillsPath);
 
   // Load Skills
@@ -129,7 +126,7 @@ SlackBot.loadSkills = function(skillsPath) {
     var stat = fs.statSync(newPath);
     if (stat.isFile()) {
       if (/(.*)\.(js|coffee)/.test(file)) {
-        require(newPath)(_this);
+        require(newPath)(SlackBot);
       }
     }
   });
@@ -141,11 +138,9 @@ SlackBot.loadSkills = function(skillsPath) {
 
 SlackBot.authorize = function(event, context) {
 
-  var _this = this;
-
   // Check Environment Variables are defined
   if (!process.env.SLACK_OAUTH_CLIENT_ID || !process.env.SLACK_OAUTH_CLIENT_SECRET) {
-    return _this.sendError(context, 'Missing required Slackbot environment variables', {
+    return SlackBot.sendError(context, 'Missing required Slackbot environment variables', {
       message: "Sorry, something went wrong with the authorization process"
     });
   }
@@ -169,7 +164,7 @@ SlackBot.authorize = function(event, context) {
   return request(url, function (error, response, body) {
 
     // Return error
-    if (error || response.statusCode !== 200) return _this.sendError(context, error, {
+    if (error || response.statusCode !== 200) return SlackBot.sendError(context, error, {
       message: "Sorry, something went wrong with the authorization process"
     });
 
@@ -190,10 +185,10 @@ SlackBot.authorize = function(event, context) {
     };
 
     // Create or Update bot
-    _this.save(slackBot, function(error) {
+    SlackBot.save(slackBot, function(error) {
 
       // Return error
-      if (error) return _this.sendError(context, error, {
+      if (error) return SlackBot.sendError(context, error, {
         message: "Sorry, something went wrong with the authorization process"
       });
 
@@ -206,7 +201,7 @@ SlackBot.authorize = function(event, context) {
           },
           function(error, result) {
 
-            if (error) return _this.sendError(context, error, {
+            if (error) return SlackBot.sendError(context, error, {
               message: "Sorry, something went wrong with the authorization process"
             });
 
