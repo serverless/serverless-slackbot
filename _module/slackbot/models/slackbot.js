@@ -25,7 +25,8 @@ var tableName = 'serverless-slackbot-slackbots-' + process.env.SERVERLESS_DATA_M
  */
 
 var SlackBot = {
-  skills: {}
+  skills: {},
+  events: {}
 };
 
 /**
@@ -43,21 +44,38 @@ SlackBot.process = function(event, context) {
   var command = body.text.split(' ');
 
   // Check if skills context exists
-  if (!command[0] || !SlackBot.skills[command[0]]) {
-    return SlackBot.sendError(context, 'Missing context', {
-      message: 'Sorry, I don\'t understand ' + command[0] + '.  I am not programmed to understand it :('
-    });
+  if (!command[1] || !SlackBot.skills[command[1]]) {
+    return SlackBot.sendError(
+        context,
+        'Missing context',
+        'Sorry, I don\'t understand ' + command[1] + '.  I am not programmed to understand it :('
+    );
   }
 
   // Check if skills context action exists
-  if (!SlackBot.skills[command[0]][command[1]]) {
-    return SlackBot.sendError(context, 'Missing context action', {
-      message: 'Sorry, I understand ' + command[0] + ', but I do not understand ' + command[1] + '...'
-    });
+  if (!SlackBot.skills[command[1]][command[0]]) {
+    return SlackBot.sendError(
+        context,
+        'Missing context action',
+        'Sorry, I understand ' + command[1] + ', but I do not understand how to ' + command[0] + ' the ' + command[1] + '...');
   }
 
-  // Perform Command
-  return SlackBot.skills[command[0]][command[1]](context, event, body);
+  SlackBot.show(body.team_id, function(error, bot) {
+
+    if (error) {
+      return SlackBot.sendError(
+          context,
+          'Error loading team',
+          'Sorry, something went wrong.  But my creator is looking into it!');
+    }
+
+    // Adjust
+    bot = bot.Item;
+
+    // Perform Command
+    return SlackBot.skills[command[1]][command[0]](event, context, body, bot);
+
+  });
 };
 
 /**
@@ -67,6 +85,45 @@ SlackBot.process = function(event, context) {
 SlackBot.addSkill = function(context, action, func) {
   if (!SlackBot.skills[context]) SlackBot.skills[context] = {};
   SlackBot.skills[context][action] = func;
+};
+
+/**
+ * Add Event
+ */
+
+SlackBot.addEvent = function(event, func) {
+  SlackBot.events[event] = func;
+};
+
+/**
+ * Load
+ */
+
+SlackBot.load = function(skillsPath, eventsPath) {
+
+  // Load Skills
+  fs.readdirSync(skillsPath).forEach(function(file) {
+    var newPath = path.join(skillsPath, file);
+    var stat = fs.statSync(newPath);
+    if (stat.isFile()) {
+      if (/(.*)\.(js|coffee)/.test(file)) {
+        require(newPath)(SlackBot);
+      }
+    }
+  });
+
+  if (!eventsPath) return;
+
+  // Load Events
+  fs.readdirSync(eventsPath).forEach(function(file) {
+    var newPath = path.join(eventsPath, file);
+    var stat = fs.statSync(newPath);
+    if (stat.isFile()) {
+      if (/(.*)\.(js|coffee)/.test(file)) {
+        require(newPath)(SlackBot);
+      }
+    }
+  });
 };
 
 /**
@@ -113,26 +170,6 @@ SlackBot.sendError = function(context, error, message) {
 };
 
 /**
- * Load Skills
- */
-
-SlackBot.loadSkills = function(skillsPath) {
-
-  skillsPath = path.join(skillsPath);
-
-  // Load Skills
-  fs.readdirSync(skillsPath).forEach(function(file) {
-    var newPath = path.join(skillsPath, file);
-    var stat = fs.statSync(newPath);
-    if (stat.isFile()) {
-      if (/(.*)\.(js|coffee)/.test(file)) {
-        require(newPath)(SlackBot);
-      }
-    }
-  });
-};
-
-/**
  * Authorize
  */
 
@@ -140,9 +177,10 @@ SlackBot.authorize = function(event, context) {
 
   // Check Environment Variables are defined
   if (!process.env.SLACK_OAUTH_CLIENT_ID || !process.env.SLACK_OAUTH_CLIENT_SECRET) {
-    return SlackBot.sendError(context, 'Missing required Slackbot environment variables', {
-      message: "Sorry, something went wrong with the authorization process"
-    });
+    return SlackBot.sendError(
+        context,
+        'Missing required Slackbot environment variables',
+        'Sorry, something went wrong with the authorization process');
   }
 
   // Prepare response to get Access Token
@@ -164,9 +202,10 @@ SlackBot.authorize = function(event, context) {
   return request(url, function (error, response, body) {
 
     // Return error
-    if (error || response.statusCode !== 200) return SlackBot.sendError(context, error, {
-      message: "Sorry, something went wrong with the authorization process"
-    });
+    if (error || response.statusCode !== 200) return SlackBot.sendError(
+        context,
+        error,
+        "Sorry, something went wrong with the authorization process");
 
     // Parse stringified JSON
     body = JSON.parse(body);
@@ -188,29 +227,22 @@ SlackBot.authorize = function(event, context) {
     SlackBot.save(slackBot, function(error) {
 
       // Return error
-      if (error) return SlackBot.sendError(context, error, {
-        message: "Sorry, something went wrong with the authorization process"
-      });
+      if (error) return SlackBot.sendError(
+          context,
+          error,
+          "Sorry, something went wrong with the authorization process");
 
-      // Send incoming webhook
-      Slack.sendIncomingWebhook(
-          slackBot.access_token,
-          {
-            webhookUri:  slackBot.incoming_webhook.url,
-            text:        'Success, you have just connected me!'
-          },
-          function(error, result) {
+      // If event authorized hook
+      if (SlackBot.events.authorized) {
+        return SlackBot.events.authorized(event, context, slackBot);
+      } else {
 
-            if (error) return SlackBot.sendError(context, error, {
-              message: "Sorry, something went wrong with the authorization process"
-            });
+        // Return response
+        return context.done(null, {
+          message: 'Your team has successfully connected to this bot!'
+        });
+      }
 
-            // Return response
-            return context.done(null, {
-              message: 'Your team has successfully connected to this bot!'
-            });
-          }
-      );
     });
   });
 };

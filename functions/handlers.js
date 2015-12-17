@@ -4,11 +4,7 @@
  * Functions
  */
 
-var path   = require('path'),
- SlackBot  = require('../_module').SlackBot;
-
-// Load You SlackBot's Skills
-SlackBot.loadSkills(path.join(__dirname, '../lib/skills'));
+var SlackBot  = require('../lib').SlackBot;
 
 /**
  * Incoming
