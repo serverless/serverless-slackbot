@@ -6,6 +6,7 @@
  */
 
 var  AWS     = require('aws-sdk'),
+    fs       = require('fs'),
     Slack    = require('slack-node'),
     request  = require('request');
 
@@ -75,6 +76,26 @@ SlackBot.sendError = function(context, error, message) {
   console.log(message);
   console.log(context);
   return context.done(message, null);
+};
+
+/**
+ * Load Skills
+ */
+
+SlackBot.loadSkills = function(path) {
+
+  var _this = this;
+
+  // Load Abilities
+  fs.readdirSync(path).forEach(function(file) {
+    var newPath = path.join(path, file);
+    var stat = fs.statSync(newPath);
+    if (stat.isFile()) {
+      if (/(.*)\.(js|coffee)/.test(file)) {
+        require(newPath)(_this);
+      }
+    }
+  });
 };
 
 /**

@@ -1,19 +1,19 @@
 {
   "functions": {
-    "authorization": {
+    "authorize": {
       "custom": {
         "excludePatterns": [
           "node_modules/aws-sdk/"
         ],
         "envVars": []
       },
-      "handler": "modules/serverless-slack/functions/handlers.authorize",
+      "handler": "modules/serverless-slackbot/functions/handlers.authorize",
       "timeout": 6,
       "memorySize": 1024,
       "eventSourceArn": "",
       "endpoints": [
         {
-          "path": "slack/authorization",
+          "path": "slackbot/authorize",
           "method": "GET",
           "authorizationType": "none",
           "apiKeyRequired": false,
@@ -40,53 +40,18 @@
         }
       ]
     },
-    "webhooks": {
+    "incoming": {
       "custom": {
         "excludePatterns": [],
         "envVars": []
       },
-      "handler": "modules/serverless-slack/functions/handlers.receiveWebhook",
+      "handler": "modules/serverless-slackbot/functions/handlers.incoming",
       "timeout": 6,
       "memorySize": 1024,
       "eventSourceArn": "",
       "endpoints": [
         {
-          "path": "slack/webhooks",
-          "method": "POST",
-          "authorizationType": "none",
-          "apiKeyRequired": false,
-          "requestParameters": {},
-          "requestTemplates": {
-            "application/x-www-form-urlencoded": "{\"body\" : $input.json(\"$\")}"
-          },
-          "responses": {
-            "400": {
-              "statusCode": "400"
-            },
-            "default": {
-              "statusCode": "200",
-              "responseParameters": {},
-              "responseModels": {},
-              "responseTemplates": {
-                "application/json": ""
-              }
-            }
-          }
-        }
-      ]
-    },
-    "slashcommands": {
-      "custom": {
-        "excludePatterns": [],
-        "envVars": []
-      },
-      "handler": "modules/serverless-slack/functions/handlers.receiveSlashcommand",
-      "timeout": 6,
-      "memorySize": 1024,
-      "eventSourceArn": "",
-      "endpoints": [
-        {
-          "path": "slack/slashcommand",
+          "path": "slackbot/incoming",
           "method": "POST",
           "authorizationType": "none",
           "apiKeyRequired": false,

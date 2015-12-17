@@ -8,10 +8,7 @@
 var service = require('../lib');
 
 // Authorize
-module.exports.authorize = service.authorization.authorize;
+module.exports.authorize = service.authorize;
 
-// Receive Webhook
-module.exports.receiveWebhook = service.webhooks.receive;
-
-// Receive SlashCommand
-module.exports.receiveSlashcommand = service.slashcommands.receive;
+// Incoming
+module.exports.incoming = service.incoming;
