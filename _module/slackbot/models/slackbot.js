@@ -27,6 +27,18 @@ var SlackBot = {
 };
 
 /**
+ * Process
+ */
+
+SlackBot.process = function(context, event) {
+
+  
+
+
+
+};
+
+/**
  * Add Skill
  */
 
