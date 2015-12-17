@@ -4,11 +4,29 @@
  * Functions
  */
 
-// Require Logic
-var service = require('../lib');
+var path = require('path');
 
-// Authorize
-module.exports.authorize = service.authorize;
+// Require SlackBot
+var SlackBot = require('../_module').SlackBot;
 
-// Incoming
-module.exports.incoming = service.incoming;
+// Load Skills
+SlackBot.loadSkills(path.join(__dirname, '../lib/skills'));
+
+/**
+ * Incoming
+ * - Process incoming SlashCommand
+ */
+
+module.exports.incoming = function(event, context) {
+  console.log("HERHERHER", event, context)
+  //return SlackBot.process(event, context);
+};
+
+/**
+ * Authorize
+ * - Handle authorization of the Slack App
+ */
+
+module.exports.authorize = function(event, context) {
+  return SlackBot.authorize(event, context);
+};

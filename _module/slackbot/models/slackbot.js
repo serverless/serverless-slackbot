@@ -7,6 +7,8 @@
 
 var  AWS     = require('aws-sdk'),
     fs       = require('fs'),
+    path     = require('path'),
+    qs       = require('qs'),
     Slack    = require('slack-node'),
     request  = require('request');
 
@@ -28,14 +30,36 @@ var SlackBot = {
 
 /**
  * Process
+ * - event.body will contain these properties from an incoming SlashCommand:
+ * - token, team_id, team_domain, channel_id, channel_name, user_id, user_name, command, text, response_url
  */
 
-SlackBot.process = function(context, event) {
+SlackBot.process = function(event, context) {
 
-  
+  var _this = this;
 
+  // Parse Body
+  var body = qs.parse(event.body);
 
+  // Parse Text
+  var command = body.text.split(' ');
 
+  // Check if skills context exists
+  if (!command[0] || !_this.skills[command[0]]) {
+    return _this.sendError(context, 'Missing context', {
+      message: 'Sorry, I don\'t understand ' + command[0] + '.  I am not programmed to understand it :('
+    });
+  }
+
+  // Check if skills context action exists
+  if (!_this.skills[command[0]][command[1]]) {
+    return _this.sendError(context, 'Missing context action', {
+      message: 'Sorry, I understand ' + command[0] + ', but I do not understand ' + command[1] + '...'
+    });
+  }
+  console.log("LKSFLSJFDSFLSLKFJ")
+  // Perform Command
+  return _this.skills[command[0]][command[1]](context, event, body);
 };
 
 /**
@@ -94,13 +118,14 @@ SlackBot.sendError = function(context, error, message) {
  * Load Skills
  */
 
-SlackBot.loadSkills = function(path) {
+SlackBot.loadSkills = function(skillsPath) {
 
   var _this = this;
+  skillsPath = path.join(skillsPath);
 
-  // Load Abilities
-  fs.readdirSync(path).forEach(function(file) {
-    var newPath = path.join(path, file);
+  // Load Skills
+  fs.readdirSync(skillsPath).forEach(function(file) {
+    var newPath = path.join(skillsPath, file);
     var stat = fs.statSync(newPath);
     if (stat.isFile()) {
       if (/(.*)\.(js|coffee)/.test(file)) {
