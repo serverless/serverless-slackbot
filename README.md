@@ -11,14 +11,14 @@ We love Slack and their RTM (websockets) API is cool but we want to build bots w
 * No monthly server costs
 * Infinitely scalable (thanks to AWS Lambda and DynamoDB)
 * Pay only when your bot is called (thanks to AWS Lambda, again)
-* Can do most of what you can do with Slack's RTM (websockets) API allows you to do
+* Do most of what you can do with Slack's RTM (websockets) API allows you to do
 * Packaged as a Slack App ready for distribution
-* Saves Slack Teams in DynamoDb.  Ready to be used by millions of Slack Teams.
-* Multi-stage support (development, production) (Thanks to the [Serverless Framework](http://www.serverless.com))
+* Saves Slack Teams separately in DynamoDb.  Ready to be used by millions of Slack Teams
+* Multi-stage support (development, production) (thanks to the [Serverless Framework](http://www.serverless.com))
 * Slack API is pre-configured.  Your bot can do all types of neat things in Slack
 
 #### Downsides
-* Some features that come with websockets/Slack's RTM API are missing, like listening to events and not having to use SlashCommands exclusively.
+* Some features that come with websockets/Slack's RTM API are missing, like listening to events and not having to use SlashCommands exclusively.  However, we've done a lot to recreate these features.  If you're clever, you will be able to recreate more of these too ;)
 
 ## How It Works
 The Serverless-SlackBot is called using a single Slack SlashCommand, which is the name of the bot.  For example, in Slack you would type: `/charlie help`.  The Serverless-SlackBot is trained to listen for the words immediately after the SlashCommand.  You can specify skills (aka functions) that fire based on the first word or the first and second word combined.
