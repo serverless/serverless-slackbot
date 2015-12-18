@@ -18,7 +18,7 @@ var dynamoConfig = {
   region:          process.env.AWS_REGION
 };
 var dynamodbDocClient = new AWS.DynamoDB.DocumentClient(dynamoConfig);
-var tableName = process.env.PROJECT_NAME + '-slackteams-' + process.env.SERVERLESS_DATA_MODEL_STAGE;
+var tableName = process.env.SERVERLESS_PROJECT_NAME + '-slackteams-' + process.env.SERVERLESS_DATA_MODEL_STAGE;
 
 /**
  * SlackBot

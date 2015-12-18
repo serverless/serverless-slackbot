@@ -55,9 +55,9 @@ $ serverless dash deploy
   * **SLACK_OAUTH_CLIENT_ID**
   * **SLACK_OAUTH_CLIENT_SECRET**
   * **SLACK_TOKEN**
-  * **PROJECT_NAME**
-  
-  
+  * **SERVERLESS_PROJECT_NAME**
+
+
 * deploy the functions again with `serverlesss function deploy` to update the env vars.
 
 * Make an **Add to Slack** button and also make sure you add the correct [Slack Scopes](https://api.slack.com/docs/oauth-scopes) that your bot will require.  Here is a good starter template with some popular scopes:
