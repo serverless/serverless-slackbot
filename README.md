@@ -50,7 +50,7 @@ $ serverless resources deploy
 ```
 $ serverless dash deploy
 ```
-* Make a **Add to Slack** button and also make sure you add the correct scopes that your bot will need.  Here is a good starter template with some popular scopes:
+* Make a **Add to Slack** button and also make sure you add the correct [Slack Scopes](https://api.slack.com/docs/oauth-scopes) that your bot will require.  Here is a good starter template with some popular scopes:
 ```
 https://slack.com/oauth/authorize?scope=incoming-webhook+commands+bot+team%3Aread+users%3Aread+chat%3Awrite%3Abot+emoji%3Aread+reactions%3Awrite&client_id=YOURSLACKCLIENTIDGOESHERE
 ```
