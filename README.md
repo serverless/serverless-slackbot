@@ -1,3 +1,4 @@
+![Serverless Slack Bot AWS Lambda API Gateway](https://servant-assets.s3.amazonaws.com/img/serverless_slackbot_readme.gif)
 serverless-slackbot
 ===================
 
@@ -21,9 +22,9 @@ We love Slack and their RTM (websockets) API is cool but we want to build dirt-c
 * Some features that come with websockets/Slack's RTM API aren't availabe on this architecture (AWS has no websockets service), like listening to events and not having to use SlashCommands exclusively.  However, we've done a lot to recreate these features.  If you're clever with the [Slack API](https://api.slack.com/methods), you will be able to recreate more of these ;)
 
 ## How It Works
-After you register a Slack Application, register a single Slack SlashCommand for it, and name the SlashCommand after your bot's name.  This SlashCommand and the words included after it are what instruct the bot.  
+After you register a Slack Application, register a single Slack SlashCommand for it, and name the SlashCommand after your bot's name.  This SlashCommand and the words included after it are what instruct the bot.
 
-For example, if you type this in Slack: `/charlie help`.  Slack will send the text to your Serverless-SlackBot, which is trained to listen for the words immediately after the SlashCommand, in this case: `help`.  
+For example, if you type this in Slack: `/charlie help`.  Slack will send the text to your Serverless-SlackBot, which is trained to listen for the words immediately after the SlashCommand, in this case: `help`.
 
 A **Skill** is function that your Serverless-SlackBot performs based on the word(s) entered in the SlashCommand.  A **Skill** can listen to only the first word, or the first two words, allowing you to include a verb.  For example, `/charlie send email` can do one thing, while `/charlie read email` can do another thing.
 
@@ -77,5 +78,5 @@ SlackBot.Slack.api('users.list', function(error, response) {});
 ```
 Here is the [documentation on the Slack API methods](https://api.slack.com/methods).  Make sure you have the right Slack Scope to use these!
 
-Good luck, 
+Good luck,
 [Serverless Team](http://www.serverless.com)
