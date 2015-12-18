@@ -92,11 +92,11 @@ SlackBot.process = function(event, context) {
  * Add Skill
  */
 
-SlackBot.addSkill = function(context, action, func) {
-  if (!SlackBot.skills[context]) SlackBot.skills[context] = {};
+SlackBot.addSkill = function(skill, verb, func) {
+  if (!SlackBot.skills[skill]) SlackBot.skills[skill] = {};
 
-  if (!action) SlackBot.skills[context] = func;
-  else SlackBot.skills[context][action] = func;
+  if (!verb) SlackBot.skills[skill] = func;
+  else SlackBot.skills[skill][verb] = func;
 };
 
 /**
