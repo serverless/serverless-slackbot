@@ -49,11 +49,12 @@ $ serverless dash deploy
 
 * Register a Slack Application
 * Add the GET endpoint that was returned to you in the previous step to the "Redirect URI" field
-* Register one SlashCommand for your application. We recommend it being the name of your bot (e.g., Charles). For the SlashCommand endpoint, add the POST endpoint that was returned to you in the previous step.
+* Register one SlashCommand for your application. We recommend it being the name of your bot (e.g., Charles). For the SlashCommand endpoint, add the POST endpoint that was returned to you in the previous step. Make note of the "Verification Token" that Slack generated for your Slash Command. We use this token to validate that the post request really is coming from Slack.
 
-* Copy the `Client_ID` and `Client_SECRET` you created with your application and Set the following environment variables in your Serverless Project.  Use `$ serverless env set` and `$ serverless env list`
+* Copy the "Client ID", "Client Secret" and "Verification Token" you created with your application and Set the following environment variables in your Serverless Project.  Use `$ serverless env set` and `$ serverless env list`
   * **SLACK_OAUTH_CLIENT_ID**
   * **SLACK_OAUTH_CLIENT_SECRET**
+  * **SLACK_TOKEN**
 
 * Make an **Add to Slack** button and also make sure you add the correct [Slack Scopes](https://api.slack.com/docs/oauth-scopes) that your bot will require.  Here is a good starter template with some popular scopes:
 ```
