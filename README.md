@@ -2,7 +2,7 @@
 serverless-slackbot
 ===================
 
-A Serverless Module featuring a SlackBot you can easily add skills to and package as a Slack Application, ready for distribution.  All without servers!
+A Serverless Module for the [Serverless Framework](http://www.serverless.com) featuring a SlackBot you can easily add skills to and package as a Slack Application, ready for distribution.  All without servers!
 
 We love Slack and their RTM (websockets) API is cool but we want to build dirt-cheap bots that don't require maintaining and paying for servers (we're Serverless!).  So, we built a powerful SlackBot that runs exclusively on *AWS Lambda*, *API Gateway* & *DynamoDB*.  Plus, you can easily add skills to it and it's ready to be distributed as a Slack Application, used by multiple Slack teams :)
 
