@@ -23,9 +23,13 @@
               "*",
               {
                 "Fn::Join": [
-                  "-",
+                  "",
                   [
-                    "table/serverless-slackbot-slackteams",
+                    "table/",
+                    {
+                      "Ref": "ProjectName"
+                    },
+                    "-slackteams-",
                     {
                       "Ref": "DataModelStage"
                     }
@@ -64,9 +68,12 @@
           },
           "TableName": {
             "Fn::Join": [
-              "-",
+              "",
               [
-                "serverless-slackbot-slackteams",
+                {
+                  "Ref": "ProjectName"
+                },
+                "-slackteams-",
                 {
                   "Ref": "DataModelStage"
                 }
