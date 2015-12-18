@@ -41,25 +41,30 @@ $ serverless module install https://github.com/serverless/serverless-slackbot
 ```
 $ serverless resources deploy
 ```
-* Register a Slack Application
-* Register one SlashCommand for your application.  We recommend it being the name of your bot (e.g., Charles)
-* Set the following environment variables in your Serverless Project.  Use `$ serverless env set` and `$ serverless env list`
-  * **SLACK_OAUTH_CLIENT_ID**
-  * **SLACK_OAUTH_CLIENT_SECRET**
-
 * Deploy the functions and endpoints with:
 ```
 $ serverless dash deploy
 ```
+* Make note of the endpoints that was returned to you. You'll use them to set up the Slack app in the next step
+
+* Register a Slack Application
+* Add the GET endpoint that was returned to you in the previous step to the "Redirect URI" field
+* Register one SlashCommand for your application. We recommend it being the name of your bot (e.g., Charles). For the SlashCommand endpoint, add the POST endpoint that was returned to you in the previous step.
+
+* Copy the `Client_ID` and `Client_SECRET` you created with your application and Set the following environment variables in your Serverless Project.  Use `$ serverless env set` and `$ serverless env list`
+  * **SLACK_OAUTH_CLIENT_ID**
+  * **SLACK_OAUTH_CLIENT_SECRET**
+
 * Make an **Add to Slack** button and also make sure you add the correct [Slack Scopes](https://api.slack.com/docs/oauth-scopes) that your bot will require.  Here is a good starter template with some popular scopes:
 ```
 https://slack.com/oauth/authorize?scope=incoming-webhook+commands+bot+team%3Aread+users%3Aread+chat%3Awrite%3Abot+emoji%3Aread+reactions%3Awrite&client_id=YOURSLACKCLIENTIDGOESHERE
 ```
+* Authorize and test your new Slack appliaction by visting the previous authorization url. After you authorize, you should be notified of the success of the authorization in your Slack team. try `/<your-slash-command> help`  and make sure everything is working great.
 
 ## Building Your Bot
 
 #### Adding Skills
-Every file in the module's `skills` folder is automatically loaded, so just add files in there to add skills.  Reference the existing skills in the `skills` folder for examples, or simply copy them.
+Every file in the module's `skills` folder is automatically loaded, so just add files in there to add skills.  Reference the existing skills in the `skills` folder for examples, or simply copy them. After you add your new skills, deploy your changes with `serverless function deploy` and choose the `incoming` function. Your new skill should be available right away and you can try it out on Slack.
 
 #### Adding Events
 Your Serverless-SlackBot also features a neat event handler system.  We're not entirely sure how this will grow.  Currently, it only handles one event: what happens when authorization is completed.
