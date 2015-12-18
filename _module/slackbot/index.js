@@ -40,6 +40,13 @@ SlackBot.process = function(event, context) {
   // Parse Body
   var body = qs.parse(event.body);
 
+  if (body.token != process.env.SLACK_TOKEN) {
+    return SlackBot.sendError(
+      context,
+      'Access Denied',
+      'Sorry, it seems that this request is not coming from Slack.');
+  }
+
   // Load team
   SlackBot.showTeam(body.team_id, function(error, slackTeam) {
 
