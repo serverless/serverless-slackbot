@@ -4,8 +4,8 @@
   "profile": "aws-0",
   "location": "https://github.com/serverless/serverless-slackbot",
   "runtime": "nodejs",
-  "author": "",
-  "description": "",
+  "author": "Serverless",
+  "description": "A Serverless Module featuring a SlackBot you can easily add skills to and package as a Slack Application, ready for distribution. All without servers!",
   "custom": {},
   "cloudFormation": {
     "lambdaIamPolicyDocumentStatements": [
