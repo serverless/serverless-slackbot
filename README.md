@@ -1,4 +1,4 @@
-![Serverless Slack Bot AWS Lambda API Gateway](https://servant-assets.s3.amazonaws.com/img/serverless_slackbot_readme.gif)
+![Serverless Slack Bot AWS Lambda API Gateway](https://servant-assets.s3.amazonaws.com/img/serverless_slackbot_readme2.gif)
 serverless-slackbot
 ===================
 
