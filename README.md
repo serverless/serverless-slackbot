@@ -1,5 +1,12 @@
-# serverless-slackbot
+serverless-slackbot
+===================
 
-This is a Serverless Module that allows you to make a SlackBot without websockets/servers via SlashCommands.  This is designed as a Slack Application, so you can package your bot in their App Directory :)
+A Serverless Module featuring a ready-for-action SlackBot that you can package up as a Slack Application and distribute.
+
+We love Slack and their RTM (websockets) API is cool but we don't want to pay for/maintain servers because we're Serverless!
+
+Though
+
+
 
 ### How It Works
