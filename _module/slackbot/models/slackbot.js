@@ -52,9 +52,8 @@ SlackBot.process = function(event, context) {
 
     slackTeam = slackTeam.Item;
 
-    // Init Api
-    SlackBot.Api = new Slack(slackTeam.access_token);
-    SlackBot.Api = SlackBot.Api.api;
+    // Init Slack
+    SlackBot.Slack = new Slack(slackTeam.access_token);
 
     /**
      * Process User Input
@@ -249,9 +248,8 @@ SlackBot.authorize = function(event, context) {
           error,
           "Sorry, something went wrong with the authorization process");
 
-      // Init Api
-      SlackBot.Api = new Slack(slackTeam.access_token);
-      SlackBot.Api = SlackBot.Api.api;
+      // Init Slack
+      SlackBot.Slack = new Slack(slackTeam.access_token);
 
       // If event authorized hook
       if (SlackBot.events.authorized) {
