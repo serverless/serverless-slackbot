@@ -7,4 +7,4 @@ var ServerlessHelpers = require('serverless-helpers-js').loadEnv();
  * SlackBot
  */
 
-module.exports.SlackBot = require('./slackbot/models/slackbot.js');
+module.exports.SlackBot = require('./slackbot/index.js');
