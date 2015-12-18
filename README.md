@@ -55,6 +55,8 @@ $ serverless dash deploy
   * **SLACK_OAUTH_CLIENT_ID**
   * **SLACK_OAUTH_CLIENT_SECRET**
   * **SLACK_TOKEN**
+  * **PROJECT_NAME**
+  
   
 * deploy the functions again with `serverlesss function deploy` to update the env vars.
 
