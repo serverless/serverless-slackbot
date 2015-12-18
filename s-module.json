@@ -25,7 +25,7 @@
                 "Fn::Join": [
                   "-",
                   [
-                    "table/serverless-slackbot-slackbots",
+                    "table/serverless-slackbot-slackteams",
                     {
                       "Ref": "DataModelStage"
                     }
@@ -66,7 +66,7 @@
             "Fn::Join": [
               "-",
               [
-                "serverless-slackbot-slackbots",
+                "serverless-slackbot-slackteams",
                 {
                   "Ref": "DataModelStage"
                 }

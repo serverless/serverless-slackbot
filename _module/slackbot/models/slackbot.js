@@ -18,7 +18,7 @@ var dynamoConfig = {
   region:          process.env.AWS_REGION
 };
 var dynamodbDocClient = new AWS.DynamoDB.DocumentClient(dynamoConfig);
-var tableName = 'serverless-slackbot-slackbots-' + process.env.SERVERLESS_DATA_MODEL_STAGE;
+var tableName = 'serverless-slackbot-slackteams-' + process.env.SERVERLESS_DATA_MODEL_STAGE;
 
 /**
  * SlackBot
@@ -40,27 +40,8 @@ SlackBot.process = function(event, context) {
   // Parse Body
   var body = qs.parse(event.body);
 
-  // Parse Text
-  var command = body.text.split(' ');
-
-  // Check if skills context exists
-  if (!command[1] || !SlackBot.skills[command[1]]) {
-    return SlackBot.sendError(
-        context,
-        'Missing context',
-        'Sorry, I don\'t understand ' + command[1] + '.  I am not programmed to understand it :('
-    );
-  }
-
-  // Check if skills context action exists
-  if (!SlackBot.skills[command[1]][command[0]]) {
-    return SlackBot.sendError(
-        context,
-        'Missing context action',
-        'Sorry, I understand ' + command[1] + ', but I do not understand how to ' + command[0] + ' the ' + command[1] + '...');
-  }
-
-  SlackBot.show(body.team_id, function(error, bot) {
+  // Load team
+  SlackBot.showTeam(body.team_id, function(error, slackTeam) {
 
     if (error) {
       return SlackBot.sendError(
@@ -69,12 +50,42 @@ SlackBot.process = function(event, context) {
           'Sorry, something went wrong.  But my creator is looking into it!');
     }
 
-    // Adjust
-    bot = bot.Item;
+    slackTeam = slackTeam.Item;
 
-    // Perform Command
-    return SlackBot.skills[command[1]][command[0]](event, context, body, bot);
+    // Init Api
+    SlackBot.Api = new Slack(slackTeam.access_token);
+    SlackBot.Api = SlackBot.Api.api;
 
+    /**
+     * Process User Input
+     */
+
+    // Parse Text
+    var input = body.text.split(' ');
+
+    // If both inputs can't be found
+    if (!SlackBot.skills[input[0]] && !SlackBot.skills[input[1]]) {
+      return SlackBot.sendError(
+          context,
+          'Missing context action',
+          'Sorry, I don\'t understand...');
+    }
+
+    // If first input is a function, run it
+    if (SlackBot.skills[input[0]] && typeof SlackBot.skills[input[0]] === 'function') {
+      return SlackBot.skills[input[0]](event, context, body, slackTeam);
+    }
+
+    // If first input is a function, run it
+    if (SlackBot.skills[input[1]][input[0]] && typeof SlackBot.skills[input[1]][input[0]] === 'function') {
+      return SlackBot.skills[input[1]][input[0]](event, context, body, slackTeam);
+    }
+
+    // Otherwise return error
+    return SlackBot.sendError(
+        context,
+        'Missing context action',
+        'Sorry, I don\'t understand...');
   });
 };
 
@@ -84,7 +95,9 @@ SlackBot.process = function(event, context) {
 
 SlackBot.addSkill = function(context, action, func) {
   if (!SlackBot.skills[context]) SlackBot.skills[context] = {};
-  SlackBot.skills[context][action] = func;
+
+  if (!action) SlackBot.skills[context] = func;
+  else SlackBot.skills[context][action] = func;
 };
 
 /**
@@ -97,6 +110,7 @@ SlackBot.addEvent = function(event, func) {
 
 /**
  * Load
+ * - Loads You Bot's Skills and Events
  */
 
 SlackBot.load = function(skillsPath, eventsPath) {
@@ -130,12 +144,12 @@ SlackBot.load = function(skillsPath, eventsPath) {
  * Show
  */
 
-SlackBot.show = function(teamId, cb) {
+SlackBot.showTeam = function(slackTeamId, cb) {
 
   var params = {
     TableName : tableName,
     Key: {
-      id: teamId
+      id: slackTeamId
     }
   };
 
@@ -146,11 +160,11 @@ SlackBot.show = function(teamId, cb) {
  * Save
  */
 
-SlackBot.save = function(team, cb) {
+SlackBot.saveTeam = function(slackTeam, cb) {
 
   var params = {
     TableName : tableName,
-    Item: team,
+    Item: slackTeam,
     ReturnValues: 'ALL_OLD'
   };
 
@@ -161,12 +175,15 @@ SlackBot.save = function(team, cb) {
  * Send Error
  */
 
-SlackBot.sendError = function(context, error, message) {
+SlackBot.sendError = function(context, error, message, in_channel) {
   console.log("---------- Error " + Math.floor(Date.now() / 1000) + ':');
   console.log(error);
   console.log(message);
   console.log(context);
-  return context.done(message, null);
+  return context.done(null, {
+    response_type: in_channel ? 'in_channel' : 'ephemeral',
+    text: message
+  });
 };
 
 /**
@@ -211,7 +228,7 @@ SlackBot.authorize = function(event, context) {
     body = JSON.parse(body);
 
     // Set team attributes
-    var slackBot = {
+    var slackTeam = {
       id:                                 body.team_id,
       name:                               body.team_name,
       scope:                              body.scope,
@@ -224,7 +241,7 @@ SlackBot.authorize = function(event, context) {
     };
 
     // Create or Update bot
-    SlackBot.save(slackBot, function(error) {
+    SlackBot.saveTeam(slackTeam, function(error) {
 
       // Return error
       if (error) return SlackBot.sendError(
@@ -232,9 +249,13 @@ SlackBot.authorize = function(event, context) {
           error,
           "Sorry, something went wrong with the authorization process");
 
+      // Init Api
+      SlackBot.Api = new Slack(slackTeam.access_token);
+      SlackBot.Api = SlackBot.Api.api;
+
       // If event authorized hook
       if (SlackBot.events.authorized) {
-        return SlackBot.events.authorized(event, context, slackBot);
+        return SlackBot.events.authorized(event, context, slackTeam);
       } else {
 
         // Return response
@@ -242,9 +263,9 @@ SlackBot.authorize = function(event, context) {
           message: 'Your team has successfully connected to this bot!'
         });
       }
-
     });
   });
 };
 
+// Export
 module.exports = SlackBot;
