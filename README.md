@@ -18,7 +18,7 @@ We love Slack and their RTM (websockets) API is cool but we want to build dirt-c
 * Slack API is pre-configured.  Your bot can do all types of neat Slack functions out-of-the-box (e.g., search messages, list users, etc.).
 
 #### Downsides
-* Some features that come with websockets/Slack's RTM API aren't availabe on this architecture (AWS has no websockets service), like listening to events and not having to use SlashCommands exclusively.  However, we've done a lot to recreate these features.  If you're clever with the Slack API, you will be able to recreate more of these ;)
+* Some features that come with websockets/Slack's RTM API aren't availabe on this architecture (AWS has no websockets service), like listening to events and not having to use SlashCommands exclusively.  However, we've done a lot to recreate these features.  If you're clever with the [Slack API](https://api.slack.com/methods), you will be able to recreate more of these ;)
 
 ## How It Works
 After you register a Slack Application, register a single Slack SlashCommand for it, and name the SlashCommand after your bot's name.  This SlashCommand and the words included after it are what instruct the bot.  
@@ -75,3 +75,7 @@ You can use it like this:
 ```
 SlackBot.Slack.api('users.list', function(error, response) {});
 ```
+Here is the [documentation on the Slack API methods](https://api.slack.com/methods).  Make sure you have the right Slack Scope to use these!
+
+Good luck, 
+[Serverless Team](http://www.serverless.com)
