@@ -50,8 +50,25 @@ $ serverless resources deploy
 ```
 $ serverless dash deploy
 ```
+* Make a **Add to Slack** button and also make sure you add the correct scopes that your bot will need.  Here is a good starter template with some popular scopes:
+```
+https://slack.com/oauth/authorize?scope=incoming-webhook+commands+bot+team%3Aread+users%3Aread+chat%3Awrite%3Abot+emoji%3Aread+reactions%3Awrite&client_id=YOURSLACKCLIENTIDGOESHERE
+```
 
-## Creating Skills
+## Building Your Bot
 
-* Every file in the module's `skills` folder is automatically loaded, so just add files in there to add skills.
-* Reference the existing skills in the `skills` folder for examples. 
+#### Adding Skills
+Every file in the module's `skills` folder is automatically loaded, so just add files in there to add skills.  Reference the existing skills in the `skills` folder for examples, or simply copy them.
+
+#### Adding Events
+Your Serverless-SlackBot also features a neat event handler system.  We're not entirely sure how this will grow.  Currently, it only handles one event: what happens when authorization is completed.
+
+#### Slack API Operations
+The Serverless-SlackBot comes with [slack-node npm module](https://github.com/clonn/slack-node-sdk).  Check out its README for information on how to use it.  But it is pre-configured with the current Slack Team's access token and ready for use here:
+```
+SlackBot.Slack
+```
+You can use it like this:
+```
+SlackBot.Slack.api('users.list', function(error, response) {});
+```
