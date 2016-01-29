@@ -2,7 +2,7 @@
 serverless-slackbot
 ===================
 
-# Under Construction:  
+# Under Construction 
 This does not work with the most recent version of the Serverless Framework.  We will be refactoring this as an open Serverless Project within the next week.
 
 #### Description
