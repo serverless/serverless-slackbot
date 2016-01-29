@@ -1,3 +1,12 @@
+
+
+
+
+# NOTE:  This does not work with the most recent version of the Serverless Framework.  We will be refactoring this as an open Serverless Project within the next week.
+
+
+
+
 ![Serverless Slack Bot AWS Lambda API Gateway](https://servant-assets.s3.amazonaws.com/img/serverless_slackbot_readme2.gif)
 serverless-slackbot
 ===================
